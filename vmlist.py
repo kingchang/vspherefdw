@@ -1,5 +1,5 @@
 """
-CREATE FOREIGN TABLE vmlist (name text, powerstate text, host text) SERVER vsphere_srv OPTIONS ( table 'vmlist');
+CREATE FOREIGN TABLE vmlist (name text, numcpu int, memorysize int, powerstate text, host text, guestos text, ip text) SERVER vsphere_srv OPTIONS ( table 'vmlist');
 """
 from logging import ERROR, WARNING
 from multicorn.utils import log_to_postgres
@@ -32,8 +32,12 @@ class vmlist:
         for vm in vmList:
             row = {}
             row['name'] = vm.name
+            row['numcpu'] = vm.summary.config.numCpu
+            row['memorysize'] = vm.summary.config.memorySizeMB
             row['powerstate'] = vm.runtime.powerState
             row['host'] = vm.runtime.host.name
+            row['guestos'] = vm.summary.guest.guestFullName
+            row['ip'] = vm.summary.guest.ipAddress
             rows.append(row)
         return rows
         
