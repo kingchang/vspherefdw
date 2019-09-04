@@ -1,5 +1,5 @@
 # vspherefdw
-vspherefdw is a PostgreSQL foreign data wrapper to manage VMware vSphere service.
+vspherefdw is a PostgreSQL foreign data wrapper to query your VMware vSphere service.
 
 ## Features:
 - List all virtual machines.
