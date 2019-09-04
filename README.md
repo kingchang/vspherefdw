@@ -7,17 +7,16 @@ vspherefdw is a PostgreSQL foreign data wrapper to query your VMware vSphere ser
 
 ### Sample of "vmlist" table
 ```
-postgres=# select * from vmlist;
-
-                     name                   | powerstate |     host
---------------------------------------------+------------+---------------
- VM-121                                     | poweredOn  | 192.168.1.5
- VM-122                                     | poweredOn  | 192.168.1.6
- VM-115                                     | poweredOn  | 192.168.1.3
- VM-111                                     | poweredOn  | 192.168.1.3
- VM-102                                     | poweredOn  | 192.168.1.4
- VM-092                                     | poweredOn  | 192.168.1.2
- VM-052                                     | poweredOff | 192.168.1.1
+postgres=# SELECT numcpu, memorysize, powerstate, host, ip FROM vmlist;
+          name         | numcpu | memorysize | powerstate |     host      |       ip
+-----------------------+--------+------------+------------+---------------+-----------------
+ VM-121                |     8  |      16384 | poweredOn  | 192.168.1.5   | 192.168.2.217
+ VM-122                |     8  |      16384 | poweredOn  | 192.168.1.6   | 192.168.2.154
+ VM-115                |     8  |      16384 | poweredOn  | 192.168.1.3   | 192.168.2.242
+ VM-111                |     8  |      16384 | poweredOn  | 192.168.1.3   | 192.168.2.206
+ VM-102                |     8  |      16384 | poweredOn  | 192.168.1.4   | 192.168.2.37
+ VM-092                |     8  |      16384 | poweredOn  | 192.168.1.2   | 192.168.2.55
+ VM-052                |     8  |      16384 | poweredOff | 192.168.1.1   | 192.168.2.56
 ```
 ## Tested Platform
 - PostgreSQL 11
@@ -45,7 +44,13 @@ CREATE SERVER vsphere_srv FOREIGN DATA WRAPPER multicorn OPTIONS (wrapper 'multi
 - Create foreign table "vmlist".
 - Do not modify the schema.
 ```
-CREATE FOREIGN TABLE vmlist (name text, powerstate text, host text) SERVER vsphere_srv OPTIONS ( table 'vmlist');
+CREATE FOREIGN TABLE vmlist (name text, numcpu int, 
+                             memorysize int, 
+                             powerstate text, 
+                             host text, 
+                             guestos text, 
+                             ip text)
+                             SERVER vsphere_srv OPTIONS ( table 'vmlist');
 ```
 - Query your virtual machine
 ```
