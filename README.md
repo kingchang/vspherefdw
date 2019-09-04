@@ -5,10 +5,12 @@ vspherefdw is a PostgreSQL foreign data wrapper to manage VMware vSphere service
 - List all virtual machines.
 - Power On or Off the specified virtual machine.
 
-### Sample of vmlist table
+### Sample of "vmlist" table
 ```
+postgres=# select * from vmlist;
+
                      name                   | powerstate |     host
-----------------------------------------------+------------+---------------
+--------------------------------------------+------------+---------------
  VM-121                                     | poweredOn  | 192.168.1.5
  VM-122                                     | poweredOn  | 192.168.1.6
  VM-115                                     | poweredOn  | 192.168.1.3
@@ -40,7 +42,7 @@ CREATE EXTENSION multicorn;
 CREATE SERVER vsphere_srv FOREIGN DATA WRAPPER multicorn OPTIONS (wrapper 'multicorn.vspherefdw.main.FDW', host 'vsphere_ip', user 'admin@domain', pwd 'password');
 ```
 
-- Create foreign table "vmlist"
+- Create foreign table "vmlist".
 - Do not modify the schema.
 ```
 CREATE FOREIGN TABLE vmlist (name text, powerstate text, host text) SERVER vsphere_srv OPTIONS ( table 'vmlist');
