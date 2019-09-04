@@ -6,6 +6,7 @@ vspherefdw is a PostgreSQL foreign data wrapper to manage VMware vSphere service
 - Power On or Off the specified virtual machine.
 
 ### Sample of vmlist table
+```
                      name                   | powerstate |     host
 ----------------------------------------------+------------+---------------
  VM-121                                     | poweredOn  | 192.168.1.5
@@ -15,7 +16,7 @@ vspherefdw is a PostgreSQL foreign data wrapper to manage VMware vSphere service
  VM-102                                     | poweredOn  | 192.168.1.4
  VM-092                                     | poweredOn  | 192.168.1.2
  VM-052                                     | poweredOff | 192.168.1.1
-
+```
 ## Tested Platform
 - PostgreSQL 11
 - Python 3.6
