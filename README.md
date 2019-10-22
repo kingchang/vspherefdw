@@ -35,9 +35,16 @@ $ cd /usr/lib/python3/dist-packages/multicorn
 $ sudo git clone https://github.com/ycku/vspherefdw.git
 ```
 
-- In PostgreSQL, one time in the beginning.
+- In PostgreSQL, the following needs to be excuted first as a superuser.
+- Grant permission to normal role vsphere.
 ```
 CREATE EXTENSION multicorn;
+GRANT USAGE ON FOREIGN DATA WRAPPER multicorn TO vsphere;
+```
+
+- Query as a normal user vsphere.
+
+```
 CREATE SERVER vsphere_srv FOREIGN DATA WRAPPER multicorn OPTIONS (wrapper 'multicorn.vspherefdw.main.FDW', host 'vsphere_ip', user 'admin@domain', pwd 'password');
 ```
 
