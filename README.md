@@ -2,11 +2,13 @@
 vspherefdw is a PostgreSQL foreign data wrapper to query your VMware vSphere service.
 
 ## Features:
-### Table: vmlist
-- List all virtual machines.
-- Power On or Off the specified virtual machine.
+- Table: vmlist
+  - List all virtual machines.
+  - Power On or Off the specified virtual machine.
+- Table: hostlist
+  - List all vSphere hosts.
 
-#### Sample of "vmlist" table
+### Sample of "vmlist" table
 ```
 postgres=# SELECT numcpu, memorysize, powerstate, host, ip FROM vmlist;
           name         | numcpu | memorysize | powerstate |     host      |       ip
@@ -19,10 +21,8 @@ postgres=# SELECT numcpu, memorysize, powerstate, host, ip FROM vmlist;
  VM-092                |     8  |      16384 | poweredOn  | 192.168.1.2   | 192.168.2.55
  VM-052                |     8  |      16384 | poweredOff | 192.168.1.1   | 192.168.2.56
 ```
-### Table: hostlist
-- List all vSphere hosts.
 
-#### Sample of "hostlist" table
+### Sample of "hostlist" table
 ```
      name    | cluster    | connstate | maintenance | cpuusage | cpuoverall | memoryusage | memoryoverall
 -------------+------------+-----------+-------------+----------+------------+-------------+---------------
