@@ -2,10 +2,11 @@
 vspherefdw is a PostgreSQL foreign data wrapper to query your VMware vSphere service.
 
 ## Features:
+### Table: vmlist
 - List all virtual machines.
 - Power On or Off the specified virtual machine.
 
-### Sample of "vmlist" table
+#### Sample of "vmlist" table
 ```
 postgres=# SELECT numcpu, memorysize, powerstate, host, ip FROM vmlist;
           name         | numcpu | memorysize | powerstate |     host      |       ip
@@ -18,6 +19,22 @@ postgres=# SELECT numcpu, memorysize, powerstate, host, ip FROM vmlist;
  VM-092                |     8  |      16384 | poweredOn  | 192.168.1.2   | 192.168.2.55
  VM-052                |     8  |      16384 | poweredOff | 192.168.1.1   | 192.168.2.56
 ```
+### Table: hostlist
+- List all vSphere hosts.
+
+#### Sample of "hostlist" table
+```
+     name    | cluster    | connstate | maintenance | cpuusage | cpuoverall | memoryusage | memoryoverall
+-------------+------------+-----------+-------------+----------+------------+-------------+---------------
+ 192.168.1.2 | MYCLUSTER  | connected | f           |     6433 |      41961 |      149937 |        262114
+ 192.168.1.4 | MYCLUSTER  | connected | f           |    18334 |      41961 |      247289 |        393186
+ 192.168.1.6 | MYCLUSTER  | connected | f           |    18899 |      83923 |      324347 |        392509
+ 192.168.1.7 |            | connected | f           |     1524 |      41961 |       14288 |         16355 
+ 192.168.1.3 | MYCLUSTER  | connected | f           |    15827 |      41961 |      245547 |        393186
+ 192.168.1.1 | MYCLUSTER  | connected | f           |    11883 |      41961 |      175103 |        261827
+ 192.168.1.5 | MYCLUSTER  | connected | f           |    13112 |      83923 |      335911 |        392509
+```
+
 ## Tested Platform
 - PostgreSQL 11
 - Python 3.6
