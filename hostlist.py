@@ -1,12 +1,14 @@
 """
-CREATE FOREIGN TABLE vmlist (name text, numcpu int, memorysize int, powerstate text, host text, guestos text, ip text) SERVER vsphere_srv OPTIONS ( table 'vmlist');
+CREATE FOREIGN TABLE hostlist (name text, cluster text, connstate text, maintenance boolean, cpuusage int, cpuoverall int, memoryusage int, memoryoverall int) SERVER vsphere_srv OPTIONS ( table 'hostlist');
+
+https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.HostSystem.html#field_detail
 """
 from logging import ERROR, WARNING
 from multicorn.utils import log_to_postgres
 from pyVmomi import vim, vmodl
 import time
 
-class vmlist:
+class hostlist:
     def __init__(self, si):
         self.si = si
         
@@ -17,7 +19,7 @@ class vmlist:
         si = self.si
         content = si.content
         objView = content.viewManager.CreateContainerView(content.rootFolder,
-                                                          [vim.VirtualMachine],
+                                                          [vim.HostSystem],
                                                           True)
         vsList = objView.view
         objView.Destroy()
@@ -30,12 +32,16 @@ class vmlist:
         for vs in vsList:
             row = {}
             row['name'] = vs.name
-            row['numcpu'] = vs.summary.config.numCpu
-            row['memorysize'] = vs.summary.config.memorySizeMB
-            row['powerstate'] = vs.runtime.powerState
-            row['host'] = vs.runtime.host.name
-            row['guestos'] = vs.summary.guest.guestFullName
-            row['ip'] = vs.summary.guest.ipAddress
+            if isinstance(vs.parent, vim.ClusterComputeResource):
+                row['cluster'] = vs.parent.name
+            else:
+                row['cluster'] = ''
+            row['connstate'] = vs.runtime.connectionState
+            row['maintenance'] = vs.runtime.inMaintenanceMode
+            row['cpuusage'] = vs.summary.quickStats.overallCpuUsage
+            row['cpuoverall'] = int(vs.hardware.cpuInfo.hz * vs.hardware.cpuInfo.numCpuCores / 1024 / 1024)
+            row['memoryusage'] = vs.summary.quickStats.overallMemoryUsage
+            row['memoryoverall'] = int(vs.hardware.memorySize / 1024 / 1024)
             rows.append(row)
         return rows
         
@@ -47,13 +53,6 @@ class vmlist:
         return new_values
      
     def update(self, old_values, new_values):
-        vmList = self.getList()
-        for vm in vmList:
-            if (vm.name == old_values):
-                if (new_values['powerstate'] == 'poweredOn'):
-                    vm.PowerOn()
-                elif (new_values['powerstate'] == 'poweredOff'):
-                    vm.PowerOff()
         return new_values
                 
     def delete(self, old_values):

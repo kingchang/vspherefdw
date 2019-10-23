@@ -16,7 +16,7 @@ from multicorn import vspherefdw
 
 class FDW(ForeignDataWrapper):
     
-    valid_tables = {'vmlist'}
+    valid_tables = {'vmlist','hostlist'}
 
     def __init__(self, options, columns):
         super(FDW, self).__init__(options, columns)
@@ -24,7 +24,7 @@ class FDW(ForeignDataWrapper):
         self.user = options.get('user', None)
         self.pwd = options.get('pwd', None)
         self.port = options.get('port', '443')
-        self.table = options.get('table', 'vmlist')
+        self.table = options.get('table', 'hostlist')
     
     def connection(self):
         if hasattr(ssl, '_create_unverified_context'):
