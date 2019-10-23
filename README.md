@@ -64,16 +64,16 @@ GRANT USAGE ON FOREIGN DATA WRAPPER multicorn TO vsphere;
 ```
 CREATE SERVER vsphere_srv FOREIGN DATA WRAPPER multicorn OPTIONS (wrapper 'multicorn.vspherefdw.main.FDW', host 'vsphere_ip', user 'admin@domain', pwd 'password');
 ```
-
-- Create foreign table "vmlist".
-- Do not modify the schema.
+## Create foreign table you need
+### Table: vmlist
+- Do not modify the column name.
 ```
 CREATE FOREIGN TABLE vmlist (name text, numcpu int, 
                              memorysize int, 
                              powerstate text, 
                              host text, 
                              guestos text, 
-                             ip text)
+                             ip inet)
                              SERVER vsphere_srv OPTIONS ( table 'vmlist');
 ```
 - Query your virtual machine
@@ -81,4 +81,22 @@ CREATE FOREIGN TABLE vmlist (name text, numcpu int,
 SELECT * FROM vmlist; -- List all virtual machines
 UPDATE vmlist SET powerstate = 'poweredOn' WHERE name = 'VM5432'; -- Power On machine "VM5432"
 UPDATE vmlist SET powerstate = 'poweredOff' WHERE name = 'VM5432'; -- Power Off machine "VM5432"
+```
+
+### Table: hostlist
+- Do not modify the column name.
+```
+CREATE FOREIGN TABLE hostlist (name text, 
+                               cluster text, 
+                               connstate text, 
+                               maintenance boolean, 
+                               cpuusage int, 
+                               cpuoverall int, 
+                               memoryusage int, 
+                               memoryoverall int) 
+                               SERVER vsphere_srv OPTIONS ( table 'hostlist');
+```
+- Query your vSphere hosts
+```
+SELECT * FROM hostlist; -- List all vSphere hosts
 ```
