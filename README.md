@@ -67,6 +67,7 @@ CREATE SERVER vsphere_srv FOREIGN DATA WRAPPER multicorn OPTIONS (wrapper 'multi
 ## Create foreign table you need
 ### Table: vmlist
 - Do not modify the column name.
+- Memroy unit: MB
 ```
 CREATE FOREIGN TABLE vmlist (name text, numcpu int, 
                              memorysize int, 
@@ -85,6 +86,8 @@ UPDATE vmlist SET powerstate = 'poweredOff' WHERE name = 'VM5432'; -- Power Off 
 
 ### Table: hostlist
 - Do not modify the column name.
+- CPU unit: MHz
+- Memory unit: MB
 ```
 CREATE FOREIGN TABLE hostlist (name text, 
                                cluster text, 
