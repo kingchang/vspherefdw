@@ -1,5 +1,14 @@
 """
-CREATE FOREIGN TABLE vmlist (name text, numcpu int, memorysize int, powerstate text, host text, guestos text, ip text) SERVER vsphere_srv OPTIONS ( table 'vmlist');
+CREATE FOREIGN TABLE vmlist (name text, 
+                             numcpu int, 
+                             memorysize int, 
+                             powerstate text, 
+                             host text, 
+                             guestos text, 
+                             ip inet) 
+                             SERVER vsphere_srv OPTIONS ( table 'vmlist');
+                             
+https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.VirtualMachine.html                             
 """
 from logging import ERROR, WARNING
 from multicorn.utils import log_to_postgres

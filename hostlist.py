@@ -1,7 +1,15 @@
 """
-CREATE FOREIGN TABLE hostlist (name text, cluster text, connstate text, maintenance boolean, cpuusage int, cpuoverall int, memoryusage int, memoryoverall int) SERVER vsphere_srv OPTIONS ( table 'hostlist');
+CREATE FOREIGN TABLE hostlist (name text, 
+                               cluster text, 
+                               connstate text, 
+                               maintenance boolean, 
+                               cpuusage int, 
+                               cpuoverall int, 
+                               memoryusage int, 
+                               memoryoverall int) 
+                               SERVER vsphere_srv OPTIONS ( table 'hostlist');
 
-https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.HostSystem.html#field_detail
+https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.HostSystem.html
 """
 from logging import ERROR, WARNING
 from multicorn.utils import log_to_postgres

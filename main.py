@@ -16,7 +16,7 @@ from multicorn import vspherefdw
 
 class FDW(ForeignDataWrapper):
     
-    valid_tables = {'vmlist','hostlist'}
+    valid_tables = {'vmlist','hostlist','datastorelist'}
 
     def __init__(self, options, columns):
         super(FDW, self).__init__(options, columns)
