@@ -7,6 +7,8 @@ vspherefdw is a PostgreSQL foreign data wrapper to query your VMware vSphere ser
   - Power On or Off the specified virtual machine.
 - Table: hostlist
   - List all vSphere hosts.
+- Table: datastorelist
+  - List all datastores
 
 ### Sample of "vmlist" table
 ```
@@ -24,8 +26,8 @@ postgres=# SELECT numcpu, memorysize, powerstate, host, ip FROM vmlist;
 
 ### Sample of "hostlist" table
 ```
-     name    | cluster    | connstate | maintenance | cpuusage | cpuoverall | memoryusage | memoryoverall
--------------+------------+-----------+-------------+----------+------------+-------------+---------------
+      name    | cluster    | connstate | maintenance | cpuusage | cpuoverall | memoryusage | memoryoverall
+--------------+------------+-----------+-------------+----------+------------+-------------+---------------
  192.168.1.2 | MYCLUSTER  | connected | f           |     6433 |      41961 |      149937 |        262114
  192.168.1.4 | MYCLUSTER  | connected | f           |    18334 |      41961 |      247289 |        393186
  192.168.1.6 | MYCLUSTER  | connected | f           |    18899 |      83923 |      324347 |        392509
@@ -34,6 +36,25 @@ postgres=# SELECT numcpu, memorysize, powerstate, host, ip FROM vmlist;
  192.168.1.1 | MYCLUSTER  | connected | f           |    11883 |      41961 |      175103 |        261827
  192.168.1.5 | MYCLUSTER  | connected | f           |    13112 |      83923 |      335911 |        392509
 ```
+
+### Sample of "datastorelist" table
+```
+      name       | type | multiplehost |   freespace   |   capacity    |                                             hostmount
+-----------------+------+--------------+---------------+---------------+---------------------------------------------------------------------------------------------------
+ datastore_ESXI06 | VMFS | f            |  289962721280 |  290984034304 | {'192.168.1.6'}
+ datastore_ESXI07 | VMFS | f            | 2952075935744 | 7186017157120 | {'192.168.1.7'}
+ datastore_ESXI04 | VMFS | f            |  289962721280 |  290984034304 | {'192.168.1.4'}
+ datastore_ESXI05 | VMFS | f            |  289962721280 |  290984034304 | {'192.168.1.5'}
+ datastore_ESXI01 | VMFS | f            |  290231156736 |  291252469760 | {'192.168.1.1'}
+ datastore_ESXI02 | VMFS | f            |  289962721280 |  290984034304 | {'192.168.1.2'}
+ datastore_ESXI03 | VMFS | f            |  289962721280 |  290984034304 | {'192.168.1.3'}
+ DataStore2       | VMFS | t            | 2034656870400 | 4397778075648 | {'192.168.1.6','192.168.1.2','192.168.1.5','192.168.1.4','192.168.1.3','192.168.1.1'}
+ DataStore1       | VMFS | t            |  549563924480 |  643976658944 | {'192.168.1.6','192.168.1.2','192.168.1.5','192.168.1.4','192.168.1.3','192.168.1.1'}
+ DataStore3       | VMFS | t            | 1893419974656 | 4294698860544 | {'192.168.1.6','192.168.1.2','192.168.1.5','192.168.1.4','192.168.1.3','192.168.1.1'}
+ DataStore4       | VMFS | t            | 2316055871488 | 4294698860544 | {'192.168.1.6','192.168.1.2','192.168.1.5','192.168.1.4','192.168.1.3','192.168.1.1'}
+
+```
+
 
 ## Tested Platform
 - PostgreSQL 11
@@ -102,4 +123,21 @@ CREATE FOREIGN TABLE hostlist (name text,
 - Query your vSphere hosts
 ```
 SELECT * FROM hostlist; -- List all vSphere hosts
+```
+
+### Table: datastorelist
+- Do not modify the column name.
+- Unit: Bytes
+```
+CREATE FOREIGN TABLE datastorelist (name text, 
+                                    type text, 
+                                    multiplehost boolean, 
+                                    freespace bigint, 
+                                    capacity bigint, 
+                                    hostmount text[]) 
+                                    SERVER vsphere_srv OPTIONS ( table 'datastorelist');
+```
+- Query your datastores
+```
+SELECT * FROM datastorelist; -- List all datastores
 ```
