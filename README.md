@@ -95,7 +95,7 @@ CREATE FOREIGN TABLE vmlist (name text, numcpu int,
                              powerstate text, 
                              host text, 
                              guestos text, 
-                             ip inet)
+                             ip inet[])
                              SERVER vsphere_srv OPTIONS ( table 'vmlist');
 ```
 - Query your virtual machine
