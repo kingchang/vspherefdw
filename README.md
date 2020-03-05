@@ -13,15 +13,15 @@ vspherefdw is a PostgreSQL foreign data wrapper to query your VMware vSphere ser
 ### Sample of "vmlist" table
 ```
 postgres=# SELECT numcpu, memorysize,diskinfo, powerstate, host, ip FROM vmlist;
-          name         | numcpu | memorysize | diskinfo |powerstate |     host      |       ip
+          name         | numcpu | memorysize | diskinfo                                               |powerstate |     host      |       ip
 -----------------------+--------+------------+------------+---------------+-----------------
  VM-121                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0}] | poweredOn  | 192.168.1.5   | {'192.168.2.217'}
- VM-122                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 0.1}, {"label": "Hard disk 2", "disk_capacityInGB": 99.88}] | poweredOn  | 192.168.1.6   | {'192.168.2.154'}
- VM-115                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0}]  | poweredOn  | 192.168.1.3   | {'192.168.2.242'}
+ VM-122                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 0.5}]   | poweredOn  | 192.168.1.6   | {'192.168.2.154'}
+ VM-115                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0}] | poweredOn  | 192.168.1.3   | {'192.168.2.242'}
  VM-111                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0}] | poweredOn  | 192.168.1.3   | {'192.168.2.206'}
  VM-102                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0}] | poweredOn  | 192.168.1.4   | {'192.168.2.37'}
- VM-092                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0},{"label": "Hard disk 2", "disk_capacityInGB": 200.0}] | poweredOn  | 192.168.1.2   | {'192.168.2.55'}
- VM-052                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0},{"label": "Hard disk 2", "disk_capacityInGB": 200.0},{"label": "Hard disk 3", "disk_capacityInGB": 1000.0}]  | poweredOff | 192.168.1.1   | {'192.168.2.56'}
+ VM-092                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0}] | poweredOn  | 192.168.1.2   | {'192.168.2.55'}
+ VM-052                |     8  |      16384 | [{"label": "Hard disk 1", "disk_capacityInGB": 100.0}] | poweredOff | 192.168.1.1   | {'192.168.2.56'}
 ```
 
 ### Sample of "hostlist" table
