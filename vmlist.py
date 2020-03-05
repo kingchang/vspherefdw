@@ -2,10 +2,11 @@
 CREATE FOREIGN TABLE vmlist (name text,
                              numcpu int,
                              memorysize int,
+                             diskInfo jsonb,
                              powerstate text,
                              host text,
                              guestos text,
-                             ip inet[])
+                             ip inet)
                              SERVER vsphere_srv OPTIONS ( table 'vmlist');
 
 https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.VirtualMachine.html
@@ -13,6 +14,8 @@ https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.VirtualMachine.html
 from logging import ERROR, WARNING
 from multicorn.utils import log_to_postgres
 from pyVmomi import vim, vmodl
+import json
+import decimal
 import time
 
 class vmlist:
@@ -33,18 +36,21 @@ class vmlist:
 
         return vsList
 
-    def compare(ip1,ip2):
-        if ip1.startswith("192.168.5") and ip2.startswith("192.168.5"):
-            return 1
-        elif ip1.startswith("211") or ip1.startswith("202") or ip2.startswith("211") or ip2.startswith("202"):
-            return -1
-        return 0
-
     def execute(self, quals, columns):
         vsList = self.getList()
         rows = []
         for vs in vsList:
             row = {}
+            disk_capacities = []
+            device = vs.config.hardware.device
+            for d in device:
+                disk_capacityInfo = {}
+                if isinstance(d,vim.vm.device.VirtualDisk):
+                    disk_capacityInGB = decimal.Decimal( str((d.capacityInKB)/1024/1024)).quantize(decimal.Decimal("0.00"))
+                    disk_capacityInfo['label'] = d.deviceInfo.label
+                    disk_capacityInfo['disk_capacityInGB'] = float(disk_capacityInGB)
+                    disk_capacities.append(disk_capacityInfo)
+            row['diskinfo'] = json.dumps(disk_capacities)
             row['name'] = vs.name
             row['numcpu'] = vs.summary.config.numCpu
             row['memorysize'] = vs.summary.config.memorySizeMB
@@ -53,15 +59,15 @@ class vmlist:
             row['guestos'] = vs.summary.guest.guestFullName
             row['ip'] = []
             for nic in vs.guest.net:
-              if nic.network:  # Only return adapter backed interfaces
-                 if nic.ipConfig is not None and nic.ipConfig.ipAddress is not None:
-                   ipconf = nic.ipConfig.ipAddress
-                   for ip in ipconf:
-                     if ":" not in ip.ipAddress:  # Only grab ipv4 addresses
-                       if ip.ipAddress.startswith("10.10"):
-                         continue
-                       if ip.ipAddress != '192.168.122.1':
-                         row['ip'].append(ip.ipAddress)
+                if nic.network:  # Only return adapter backed interfaces
+                    if nic.ipConfig is not None and nic.ipConfig.ipAddress is not None:
+                        ipconf = nic.ipConfig.ipAddress
+                        for ip in ipconf:
+                            if ":" not in ip.ipAddress:  # Only grab ipv4 addresses
+                                if ip.ipAddress.startswith("10.10"):
+                                    continue
+                                if ip.ipAddress != '192.168.122.1':
+                                    row['ip'].append(ip.ipAddress)
             row['ip'].sort()
             rows.append(row)
         return rows
