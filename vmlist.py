@@ -14,6 +14,7 @@ https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.VirtualMachine.html
 from logging import ERROR, WARNING
 from multicorn.utils import log_to_postgres
 from pyVmomi import vim, vmodl
+from pyVmomi.VmomiSupport import VmomiJSONEncoder
 import json
 import decimal
 import time
@@ -36,6 +37,19 @@ class vmlist:
 
         return vsList
 
+    @staticmethod
+    def del_none(d):
+        for key, value in list(d.items()):
+            if value is None:
+                del d[key]
+            elif isinstance(value, dict):
+                del_none(value)
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, dict):
+                        del_none(item)
+        return d  # For convenience     
+      
     def execute(self, quals, columns):
         vsList = self.getList()
         rows = []
@@ -46,11 +60,13 @@ class vmlist:
             for d in device:
                 disk_capacityInfo = {}
                 if isinstance(d,vim.vm.device.VirtualDisk):
+                    vmlist.del_none(d.backing.__dict__)
                     disk_capacityInGB = decimal.Decimal( str((d.capacityInKB)/1024/1024)).quantize(decimal.Decimal("0.00"))
                     disk_capacityInfo['label'] = d.deviceInfo.label
                     disk_capacityInfo['disk_capacityInGB'] = float(disk_capacityInGB)
+                    disk_capacityInfo['backing'] = d.backing
                     disk_capacities.append(disk_capacityInfo)
-            row['diskinfo'] = json.dumps(disk_capacities)
+            row['diskinfo'] = json.dumps(disk_capacities,cls=VmomiJSONEncoder)
             row['name'] = vs.name
             row['numcpu'] = vs.summary.config.numCpu
             row['memorysize'] = vs.summary.config.memorySizeMB
@@ -68,6 +84,11 @@ class vmlist:
                                     continue
                                 if ip.ipAddress != '192.168.122.1':
                                     row['ip'].append(ip.ipAddress)
+                    elif  nic.ipConfig is None and nic.ipAddress is not None:
+                        ips = nic.ipAddress
+                        for ip in ips:
+                            if ":" not in ip:
+                                row['ip'].append(ip)
             row['ip'].sort()
             rows.append(row)
         return rows
